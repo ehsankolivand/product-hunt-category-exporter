@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title data-i18n="app.title">Product Hunt · خروجی دسته‌بندی</title><link rel="stylesheet" href="styles.css"><script src="dashboard.js" type="module"></script></head>
+<body>
+  <header class="topbar"><div class="brand"><img src="icons/48.png" width="42" height="42" alt=""><div><strong dir="ltr">Product Hunt Exporter · 1.3.0</strong><span data-i18n="app.subtitle">دریافت هم‌زمان با سرعت تطبیقی</span></div></div><div class="topbar-controls"><label class="language-control" for="language"><span data-i18n="app.language">زبان</span><select id="language" dir="auto"><option value="fa" lang="fa">فارسی</option><option value="en" lang="en">English</option></select></label><span class="pill" data-i18n="app.local">ذخیره روی دستگاه خودت</span></div></header>
+  <main>
+    <section class="intro"><span class="eyebrow" data-i18n="intro.eyebrow">یک دسته‌بندی، یک مجموعهٔ مرتب</span><h1 data-i18n="intro.title">محصول‌ها را یک‌جا جمع کن.</h1><p data-i18n="intro.description">توضیحات، امتیازها و حرف کاربران؛ در فایل‌های JSON حداکثر ۵۰تایی.</p></section>
+    <div class="layout">
+      <aside class="panel setup"><h2 data-i18n="setup.title">دریافت جدید</h2><label for="category" data-i18n="setup.url">آدرس دسته‌بندی</label><input dir="ltr" type="url" id="category" placeholder="https://www.producthunt.com/categories/productivity" autocomplete="off">
+        <p class="hint" data-i18n="setup.urlHint">دریافت از صفحهٔ اول شروع می‌شود؛ حتی اگر الان در صفحهٔ سوم باشی. فیلتر و ترتیبِ موجود در آدرس حفظ می‌شود.</p>
+        <p class="source-preview" id="sourcePreview" dir="ltr" data-i18n="setup.noCategory">دسته‌بندی هنوز انتخاب نشده</p>
+        <label for="mode" data-i18n="setup.mode">نوع دریافت</label><select id="mode" class="full"><option value="full" data-i18n="setup.full">سریع و کامل؛ همهٔ نظرات و دیدگاه‌ها</option><option value="catalog" data-i18n="setup.catalog">فهرست فوری؛ توضیحات و امتیازها، بدون متن نظرات</option></select>
+        <p id="modeHint" class="hint">دریافت هم‌زمان با ۴ مسیر. زمان حالت کامل به تعداد نظرات هر محصول بستگی دارد.</p>
+        <details><summary data-i18n="setup.settings">تنظیمات دریافت</summary><div class="settings">
+          <label class="check"><input type="checkbox" id="reviews" checked><span data-i18n="setup.reviews">متن کامل نظرات و امتیاز کاربران</span></label>
+          <label class="check"><input type="checkbox" id="comments" checked><span data-i18n="setup.comments">دیدگاه‌ها و پاسخ‌های معرفی‌ها (کندتر)</span></label>
+          <label for="maxProducts" data-i18n="setup.maxProducts">حداکثر محصول؛ صفر یعنی همه</label><input type="number" id="maxProducts" value="0" min="0" max="1000000" step="1">
+          <label for="concurrency" data-i18n="setup.concurrency">تعداد دریافت هم‌زمان</label><input type="number" id="concurrency" value="4" min="1" max="6" step="1">
+          <label for="delay" data-i18n="setup.delay">حداقل فاصلهٔ درخواست‌ها (ثانیه)</label><input type="number" id="delay" value="0.15" min="0.1" max="30" step="0.05">
+          <p class="hint small" data-i18n="setup.delayHint">محدودیت اول فقط مکث می‌دهد. اگر شروع دوباره هم محدود شود، فاصله فقط ۰٫۱ ثانیه بیشتر می‌شود.</p>
+          <label for="maxReviews" data-i18n="setup.maxReviews">حداکثر نظر هر محصول؛ صفر یعنی همه</label><input type="number" id="maxReviews" value="0" min="0" step="1">
+          <label for="maxComments" data-i18n="setup.maxComments">حداکثر دیدگاه هر معرفی؛ صفر یعنی همه</label><input type="number" id="maxComments" value="0" min="0" step="1">
+        </div></details>
+        <button id="startFolder" class="primary full" data-i18n="setup.startFolder">انتخاب پوشه و دریافت</button><button id="start" class="secondary full" data-i18n="setup.start">دریافت و ذخیره در افزونه</button>
+        <p class="hint" data-i18n="setup.folderHint">پوشهٔ هر دسته‌بندی خودکار ساخته می‌شود. بدون انتخاب پوشه هم می‌توانی بعداً ZIP بگیری.</p>
+        <hr><h2 data-i18n="history.title">دریافت‌های قبلی</h2><div id="history" class="history"><p class="hint" data-i18n="history.empty">هنوز دریافتی شروع نشده.</p></div>
+      </aside>
+      <div class="workspace">
+        <section class="panel progress-panel"><div class="section-line"><div><span class="eyebrow" id="stage" data-i18n="progress.ready">آمادهٔ شروع</span><h2 id="categoryName" data-i18n="progress.choose">دسته‌بندی را انتخاب کن</h2></div><span class="badge" id="status" data-i18n="status.ready">آماده</span></div>
+          <p id="message" role="status" aria-live="polite" data-i18n="progress.initial">صفحهٔ یک دسته‌بندی را در پروداکت هانت باز کن و روی آیکن افزونه بزن.</p>
+          <progress id="progress" max="100" value="0" aria-label="پیشرفت دریافت" data-i18n-aria-label="progress.label"></progress>
+          <div class="stats"><div><strong id="found">۰</strong><span data-i18n="progress.found">محصول پیدا شد</span></div><div><strong id="processed">۰</strong><span data-i18n="progress.processed">محصول بررسی شد</span></div><div><strong id="reviewCount">۰</strong><span data-i18n="progress.reviews">نظر کاربران</span></div><div><strong id="commentCount">۰</strong><span data-i18n="progress.comments">دیدگاه معرفی‌ها</span></div></div>
+          <p id="coverage" class="hint"></p><p id="notice" class="notice" hidden></p>
+          <p id="speed" class="hint"></p>
+          <div class="actions"><button id="resume" class="primary" disabled data-i18n="progress.resume">ادامهٔ دریافت</button><button id="pause" class="secondary" disabled data-i18n="progress.pause">توقف</button><button id="worker" class="text-button" disabled data-i18n="progress.worker">نمایش صفحهٔ دریافت</button><button id="retry" class="text-button" disabled data-i18n="progress.retry">تلاش دوبارهٔ موارد ناقص</button></div>
+          <p class="hint small" data-i18n="progress.keepOpen">این صفحه باز بماند. بستن صفحه، خواب دستگاه یا قطع اینترنت، دریافت را متوقف می‌کند؛ اطلاعات ثبت‌شده باقی می‌ماند و قابل‌ادامه است.</p>
+        </section>
+        <section class="panel"><div class="section-line"><h2 data-i18n="export.title">فایل‌های خروجی</h2><span class="pill" data-i18n="export.chunk">۵۰ محصول در هر فایل</span></div>
+          <div class="export-line"><label for="sort" data-i18n="export.sort">مرتب‌سازی</label><select id="sort"><option value="category" data-i18n="export.category">ترتیب دسته‌بندی</option><option value="rating" data-i18n="export.rating">بیشترین میانگین امتیاز</option><option value="ratings" data-i18n="export.ratings">بیشترین تعداد امتیاز</option><option value="reviews" data-i18n="export.reviews">بیشترین تعداد نظر</option><option value="votes" data-i18n="export.votes">بیشترین رأی معرفی‌ها</option><option value="name" data-i18n="export.name">نام محصول</option></select><button id="zip" class="primary" disabled data-i18n="export.zip">دریافت ZIP</button><button id="folder" class="secondary" disabled data-i18n="export.folder">ذخیره در پوشه</button></div>
+          <p class="hint" id="savedPath" data-i18n="export.note">امتیاز ستاره‌ای و رأی معرفی‌ها، جدا ذخیره می‌شوند. مقدار ناموجود با «—» نمایش داده می‌شود.</p>
+        </section>
+        <section class="panel table-panel"><div class="section-line"><h2 data-i18n="table.title">محصول‌های جمع‌آوری‌شده</h2><label class="sr-only" for="search" data-i18n="table.search">جستجوی محصول</label><input id="search" placeholder="جستجو در نام محصول…" data-i18n-placeholder="table.placeholder" type="search"></div>
+          <div class="table-wrap"><table><thead><tr><th data-i18n="table.product">محصول</th><th data-i18n="table.average">میانگین</th><th data-i18n="table.ratings">تعداد امتیاز</th><th data-i18n="table.votes">رأی‌ها</th><th data-i18n="table.status">وضعیت</th></tr></thead><tbody id="products"><tr><td colspan="5" class="empty" data-i18n="table.initial">محصول‌ها بعد از شروع اینجا نمایش داده می‌شوند.</td></tr></tbody></table></div><p class="hint" id="tableNote"></p>
+        </section>
+        <details class="panel logs"><summary data-i18n="logs.title">گزارش دریافت و موارد ناقص</summary><div id="logs"></div></details>
+      </div>
+    </div>
+  </main><footer data-i18n="app.footer">بدون ارسال اطلاعات به سرور دیگر · بدون نیاز به کلید API</footer>
+</body></html>

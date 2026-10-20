@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Product Hunt — Category Exporter"
+  },
+  "extensionDescription": {
+    "message": "Export a Product Hunt category, ratings, reviews and launch comments into resumable, 50-product JSON files."
+  },
+  "actionTitle": {
+    "message": "Export this Product Hunt category"
+  }
+}
